@@ -9,25 +9,29 @@ use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 
 class Bambam {
-	const HOSTNAME = 'dobambam.com';
-	const TIMEOUT = 5.0;
+	private $hostname = 'dobambam.com';
+	private $timeout = 2.0;
 
 	private $teamname = '';
-	private $username = '';
-	private $password = '';
-	private $hostname = '';
-	private $requestMode = 'sync';
+	private $credential = null;
 	private $client = null;
 
-	public function __construct(string $teamname, string $username, string $password, ?array $options = []) {
+	public function __construct(string $teamname, ?array $options = []) {
 		$this->teamname = $teamname;
-		$this->username = $username;
-		$this->password = $password;
-		$this->hostname = $options['hostname'] ?? self::HOSTNAME;
+
+		$this->credential = $options['credential'] ?? null;
+		if(!is_null($this->credential) && $this->credential instanceof Credential) {
+			throw new \InvalidArgumentException('credential is not instance of Credential class.');
+		}
+
 		$this->client = new Client([
 			'base_uri' => $this->getBaseUri(),
-			'timeout' => $options['timeout'] ?? self::TIMEOUT
+			'timeout' => $options['timeout'] ?? $this->timeout
 		]);
+	}
+
+	public function setDefaultCredential(Credential $credential): self {
+		$this->credential = $credential;
 	}
 
 	public function getBaseUri(): string {
@@ -38,21 +42,18 @@ class Bambam {
 		return $this->getBaseUri() . trim($endpoint, '/');
 	}
 
-	public function getCredentialHash(): string {
-		return base64_encode($this->username . ':' . $this->password);
-	}
-
-	public function getDefaultRequestHeaders(): array {
-		return [
-			'Accept' => 'application/json',
-			'Content-Type' => 'application/json',
-			'Authorization' => $this->getCredentialHash()
-		];
-	}
-
 	public function getRequestOptions(?array $query = [], ?array $form_params = [], ?array $options = []): array {
+		$credential = $options['credential'] ?? $this->credential;
+		if(!($credential instanceof Credential)) {
+			throw new \InvalidArgumentException('credential is not instance of Credential class.');
+		}
+
 		return array_merge([
-			'headers' => $this->getDefaultRequestHeaders(),
+			'headers' => [
+				'Accept' => 'application/json',
+				'Content-Type' => 'application/json',
+				'Authorization' => sprintf('Basic %s', $credential->getHash())
+			],
 			'query' => $query,
 			'form_params' => $form_params
 		], $options);
