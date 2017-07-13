@@ -1,0 +1,19 @@
+{
+	"name": "kirrie/bambam-api",
+	"description": "php wrapper library for bambam openapi",
+	"authors": [
+		{
+			"name": "kirrie",
+			"email": "kirrie@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=7.1",
+		"guzzlehttp/guzzle": "^6.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"Bambam\\": "src/"
+		}
+	}
+}
