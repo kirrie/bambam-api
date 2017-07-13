@@ -11,6 +11,9 @@
 		"php": ">=7.1",
 		"guzzlehttp/guzzle": "^6.3"
 	},
+	"suggests": {
+		"ext-curl": "for multiple curl execution."
+	},
 	"autoload": {
 		"psr-4": {
 			"Bambam\\": "src/"
