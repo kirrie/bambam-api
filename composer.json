@@ -1,6 +1,6 @@
 {
 	"name": "kirrie/bambam-api",
-	"description": "php wrapper for bambam openapi",
+	"description": "php wrapper library for bambam openapi",
 	"authors": [
 		{
 			"name": "kirrie",
