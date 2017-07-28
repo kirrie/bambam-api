@@ -20,7 +20,7 @@ class Bambam {
 		$this->teamname = $teamname;
 
 		$this->credential = $options['credential'] ?? null;
-		if(!is_null($this->credential) && $this->credential instanceof Credential) {
+		if(!is_null($this->credential) && !($this->credential instanceof Credential)) {
 			throw new \InvalidArgumentException('credential is not instance of Credential class.');
 		}
 
